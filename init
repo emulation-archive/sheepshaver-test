@@ -1,0 +1,4 @@
+#!/bin/sh
+self="$(dirname -- "$(realpath -- "$0")")"
+
+exec qjs "$self/init.js" "$@"

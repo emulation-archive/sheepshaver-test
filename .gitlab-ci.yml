@@ -1,0 +1,14 @@
+build:
+  image: docker
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - if test "$CI_COMMIT_REF_SLUG" = "master"; then CI_COMMIT_REF_SLUG="latest"; fi
+    #- docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" || true
+    - docker build --cache-from "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+    - time ./convert-docker-to-qcow2 "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "image.qcow2"
+  artifacts:
+    paths:
+      - image.qcow2

@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eux
+
+DOCKER_IMAGE="$1"
+QCOW2_IMAGE="$2"
+
+# printf "%s" "$DOCKER_IMAGE" | grep -q --null-data '^[-a-zA-Z0-9_:./]*$'
+
+REPO_DIGEST="$(docker inspect --format="{{index .RepoDigests 0}}" "$DOCKER_IMAGE" || true)"
+# printf "%s" "$REPO_DIGEST" > repo-digest
+
+docker run \
+  --rm "$(docker build \
+  --build-arg "DOCKER_IMAGE=$DOCKER_IMAGE" \
+  --build-arg "REPO_DIGEST=$REPO_DIGEST" \
+  -q - << 'EOF'
+  arg DOCKER_IMAGE
+  from "$DOCKER_IMAGE" as source
+  from alpine
+  arg REPO_DIGEST
+  run apk add e2fsprogs qemu-img jq
+  copy --from=source / /mnt
+  run mkdir -p /mnt/metadata
+  run printf "$REPO_DIGEST" > /mnt/metadata/repo-digest
+  run test -e /mnt/metadata/metadata.json || echo '{}' > /mnt/metadata/metadata.json
+  run jq '.containerDigest = env.REPO_DIGEST' \
+    /mnt/metadata/metadata.json > /mnt/metadata/metadata.json.new && \
+    mv /mnt/metadata/metadata.json.new /mnt/metadata/metadata.json
+  cmd truncate -s 10G /image.raw >&2 && \
+    time mkfs.ext4 -v -d /mnt /image.raw >&2 && \
+    time qemu-img convert -f raw -O qcow2 /image.raw /image.qcow2 >&2 && \
+    rm /image.raw >&2 && \
+    cat /image.qcow2
+EOF
+)" > "$QCOW2_IMAGE"
