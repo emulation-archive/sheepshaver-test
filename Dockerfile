@@ -10,7 +10,7 @@ COPY setup setup
 RUN /setup
 
 # Metadata boilerplate
-COPY metadata /metadata/
+COPY metadata.json .
 ARG OCI_URL
 RUN jq '.ociSourceUrl = env.OCI_URL' /metadata/metadata.json > /metadata/metadata.json.new && \
   mv /metadata/metadata.json.new /metadata/metadata.json
