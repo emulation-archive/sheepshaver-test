@@ -6,6 +6,7 @@ LABEL "EAAS_EMULATOR_TYPE"="test"
 COPY init .
 COPY init.js .
 COPY lib .
+COPY setup setup
 RUN /setup
 
 # Metadata boilerplate
