@@ -1,4 +1,18 @@
 {
   "emulatorType": "test",
-  "emulatorVersion": "1"
+  "emulatorVersion": "1",
+  "supportedMachines": [
+    {
+      "id": "emulators:sheepshaver#default",
+      "title": "SheepShaver Power Mac",
+      "supportedHardwareComponents": [
+        { "id": "emulators:sheepshaver#default-disk" }
+      ]
+    }
+  ],
+  "supportedFrameworkComponents": [
+    {
+      "id": "eaas:xrpa"
+    }
+  ]
 }

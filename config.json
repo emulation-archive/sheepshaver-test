@@ -1,0 +1,22 @@
+{
+  "machine": "emulators:sheepshaver#default",
+  "hardwareComponents": [
+    {
+      "index": 2,
+      "component": "emulators:sheepshaver#default-disk",
+      "path": "/emucon/drives/drive1"
+    },
+    {
+      "index": 1,
+      "component": "emulators:qemu#x86_64-",
+      "nativeConfig": []
+    }
+  ],
+  "frameworkComponents": [
+    {
+      "frameworkComponent": "framework:xpra",
+      "path": "/emucon/xpra-iosock"
+    }
+  ],
+  "nativeConfig": ["-smp", "2"]
+}
