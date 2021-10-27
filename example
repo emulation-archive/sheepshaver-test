@@ -1,3 +1,4 @@
 #!/bin/sh
+cd -- "(dirname -- "$(realpath -- "$0")")"
 
 EAAS_CONFIG="$(cat config.json)" ./init

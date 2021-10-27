@@ -9,6 +9,10 @@
         {
           "id": "emulators:sheepshaver#default-disk",
           "type": "eaas:disk"
+        },
+        {
+          "id": "emulators:sheepshaver#default-os-rom",
+          "type": "eaas:rom"
         }
       ]
     }

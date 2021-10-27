@@ -10,6 +10,11 @@
       "index": 1,
       "component": "emulators:qemu#x86_64-",
       "nativeConfig": []
+    },
+    {
+      "index": 3,
+      "component": "emulators:sheepshaver#default-os-rom",
+      "path": ""
     }
   ],
   "frameworkComponents": [
@@ -18,5 +23,8 @@
       "path": "/emucon/xpra-iosock"
     }
   ],
-  "nativeConfig": ["-smp", "2"]
+  "nativeConfig": [
+    "-smp",
+    "2"
+  ]
 }
