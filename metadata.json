@@ -6,7 +6,10 @@
       "id": "emulators:sheepshaver#default",
       "title": "SheepShaver Power Mac",
       "supportedHardwareComponents": [
-        { "id": "emulators:sheepshaver#default-disk" }
+        {
+          "id": "emulators:sheepshaver#default-disk",
+          "type": "eaas:disk"
+        }
       ]
     }
   ],

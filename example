@@ -1,0 +1,3 @@
+#!/bin/sh
+
+EAAS_CONFIG="$(cat config.json)" ./init
