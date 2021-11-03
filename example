@@ -1,4 +1,4 @@
 #!/bin/sh
-cd -- "(dirname -- "$(realpath -- "$0")")"
+cd -- "$(dirname -- "$(realpath -- "$0")")" || exit
 
 EAAS_CONFIG="$(cat config.json)" ./init

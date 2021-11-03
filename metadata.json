@@ -5,21 +5,25 @@
     {
       "id": "emulators:sheepshaver#default",
       "title": "SheepShaver Power Mac",
+      "superClass": "Machine",
       "supportedHardwareComponents": [
         {
           "id": "emulators:sheepshaver#default-disk",
-          "type": "eaas:disk"
+          "type": "eaas:disk",
+          "superClass": "Disk"
         },
         {
           "id": "emulators:sheepshaver#default-os-rom",
-          "type": "eaas:rom"
+          "type": "eaas:rom",
+          "superClass": "Rom"
         }
       ]
     }
   ],
   "supportedFrameworkComponents": [
     {
-      "id": "eaas:xrpa"
+      "id": "eaas:xpra",
+      "superClass": "Xpra"
     }
   ]
 }
