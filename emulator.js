@@ -1,9 +1,9 @@
 import { HardwareComponent, EaasMachine } from "./lib/eaas.js";
 
 export class Machine extends EaasMachine {
-    args = ["SheepShaver", "--nosound", "true", "--ramsize"];
+  args = ["SheepShaver", "--nosound", "true", "--ramsize"];
 
-    constructor() {
+  constructor() {
     super();
     console.log("Basilisk");
   }

@@ -23,6 +23,7 @@ import * as emulator from "./emulator.js";
 
   const compareIndex = ({ index: a }, { index: b }) =>
     a < b ? -1 : a > b ? 1 : 0;
+
   const frameworkComponents = config.frameworkComponents.sort(compareIndex);
   const hardwareComponents = config.hardwareComponents.sort(compareIndex);
 

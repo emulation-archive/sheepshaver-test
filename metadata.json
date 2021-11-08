@@ -23,7 +23,8 @@
   "supportedFrameworkComponents": [
     {
       "id": "eaas:xpra",
-      "superClass": "Xpra"
+      "superClass": "Xpra",
+      "order": 1
     }
   ]
 }
