@@ -13,3 +13,5 @@ URL3="$URL1$URL2"
 
 curl -sL "$URL3" | tar xzv --strip-components 2 usr/bin/qjs.static
 mv qjs.static qjs
+
+mv qjs /usr/local/bin/

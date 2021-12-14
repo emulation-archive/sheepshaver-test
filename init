@@ -1,5 +1,5 @@
 #!/bin/sh -eu
 self="$(dirname -- "$(realpath -- "$0")")"
 
-cd -- "$self"
+# cd -- "$self"
 exec qjs "$self/init.js" "$@"

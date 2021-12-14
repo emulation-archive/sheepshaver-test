@@ -1,0 +1,46 @@
+#!/bin/sh -u
+
+: "${PORT:=8099}"
+
+cat << EOF
+$0 runs an EaaS emulator image locally for debugging.
+You need to know what you are doing and this will not alway work!
+
+## Examples
+
+$0 registry.gitlab.com/emulation-as-a-service/emulators/browser:chrome-53
+
+## Xpra clients
+
+Client embedded in running Docker image: http://localhost:$PORT
+
+Client from a local xpra-html5 repository: http://localhost:8080/index.html?ssl=false&server=localhost&port=$PORT
+
+Client from a local eaas-client: http://localhost:8080/xpra/xpra-test.html?ssl=false&server=localhost&port=$PORT
+
+Upstream client ("latest development version"): https://xpra.org/html5/latest/index.html?ssl=false&server=localhost&port=$PORT
+
+### Additional Xpra client options (to be appended to the URL):
+
+&keyboard_layout=us
+
+EOF
+
+docker_image="$1"
+shift
+
+set -x
+socat tcp-listen:"$PORT",reuseaddr,fork unix-connect:emucon/xpra & pid="$!"
+set +x
+trap 'set -x; kill "$pid"' EXIT HUP INT TERM
+
+rm -rf emucon/data/networks/nic_0 emucon/xpra
+mkdir -p emucon/data/networks/nic_0
+docker pull "$docker_image"
+docker run -it \
+  -e MAC=00:00:00:00:00:00 \
+  -e NIC=0 \
+  -e EAAS_CONFIG="$(cat config.json)" \
+  -v "$PWD/emucon:/emucon" \
+  "$docker_image" \
+  setpriv --reuid=1000 --regid=1000 --init-groups -- /init 

@@ -1,13 +1,11 @@
 import { FrameworkComponent } from "./lib/eaas.js";
-import { run } from "./lib/lib.js";
+import { mkdir, run } from "./lib/lib.js";
 
 export function dirname(path) {
   return path.replace(/\/*[^\/]+\/*$/, "") || ".";
 }
 
-export async function waitPath() {
-
-}
+export async function waitPath() {}
 
 export class Pulse extends FrameworkComponent {
   env = {};
@@ -48,6 +46,9 @@ export class Xpra extends FrameworkComponent {
   hasPulse = false;
   constructor() {
     super();
+
+    /* await */ mkdir("/tmp/.X11-unix");
+
     console.log("xpra:", new.target.meta);
     this.args = [
       "xpra",
@@ -56,18 +57,24 @@ export class Xpra extends FrameworkComponent {
       ...(this.hasPulse
         ? ["--speaker=disabled", "--pulseaudio=no"]
         : ["--speaker=on", "--pulseaudio=yes"]),
-      "--start=sh -c 'xhost +si:localuser:bwfla; touch /tmp/xpra-started'"`--socket-dir=${dirname(
-        this.xprasock
-      )}`,
+      "--start=sh -c 'xhost +si:localuser:bwfla; touch /tmp/xpra-started'",
+      `--socket-dir=${dirname(this.xprasock)}`,
       `--bind=${this.xprasock}`,
       "--microphone=disabled",
       "--notifications=no",
       "--dbus-launch=off",
       "--printing=no",
       "--webcam=off",
-      "--daemon=yes",
+      "--daemon=no",
       "--mdns=off",
       "--html=on",
     ];
+    console.log(this.args);
+  }
+  start() {
+    console.debug("starting Xpra");
+    run({
+      cmd: this.args,
+    });
   }
 }
