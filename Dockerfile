@@ -20,6 +20,7 @@ WORKDIR /
 
 RUN ln -fs /eaas/init /
 COPY metadata.json .
+COPY metadata .
 
 # Metadata boilerplate
 #ARG OCI_URL

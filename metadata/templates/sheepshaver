@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:emulationEnvironmentTemplate xmlns:ns2="http://bwfla.bwl.de/common/datatypes">
+    <ns2:id>sheepshaver</ns2:id>
+    <ns2:description>
+        <ns2:title>Generic Sheepshaver Template</ns2:title>
+    </ns2:description>
+    <ns2:metaDataVersion>1</ns2:metaDataVersion>
+    <ns2:arch>ppc</ns2:arch>
+    <ns2:model xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <ns2:emulator bean="SheepShaver"/>
+    <ns2:ui_options xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+    <ns2:operatingSystemId xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Q904519</ns2:operatingSystemId>
+    
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>disk</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>disk</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>floppy</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>floppy</ns2:type>
+    </ns2:drive>
+
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>cdrom</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>cdrom</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>cdrom</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>cdrom</ns2:type>
+    </ns2:drive>
+    <ns2:drive>
+        <ns2:data></ns2:data>
+        <ns2:type>cdrom</ns2:type>
+    </ns2:drive>
+
+</ns2:emulationEnvironmentTemplate>
