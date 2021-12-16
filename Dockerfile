@@ -5,6 +5,9 @@ RUN ./setup
 
 LABEL "EAAS_EMULATOR_TYPE"="test"
 
+LABEL "EAAS_EMULATOR_TYPE"="sheepshaver"
+LABEL "EAAS_EMULATOR_VERSION"="sheepshaver-ld"
+
 # prepare EAAS runtime
 
 WORKDIR /eaas
