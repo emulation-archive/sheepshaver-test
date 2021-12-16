@@ -1,32 +1,85 @@
-#!/bin/sh
-set -eux
+#!/bin/sh -xeu
 
 DOCKER_IMAGE="$1"
-QCOW2_IMAGE="$2"
+QCOW2_IMAGE="${2:-$DOCKER_IMAGE.qcow2}"
 
-# printf "%s" "$DOCKER_IMAGE" | grep -q --null-data '^[-a-zA-Z0-9_:./]*$'
+case "$DOCKER_IMAGE" in -*|*[!-a-zA-Z0-9_:./]*) exit 1; esac
 
-REPO_DIGEST="$(docker inspect --format="{{index .RepoDigests 0}}" "$DOCKER_IMAGE" || true)"
-# printf "%s" "$REPO_DIGEST" > repo-digest
+docker image ls -- "$DOCKER_IMAGE" || docker image pull -- "$DOCKER_IMAGE"
+DOCKER_IMAGE_INSPECT_JSON="$(docker image inspect -- "$DOCKER_IMAGE")"
+
+# shellcheck disable=SC2016
+update_emulator_json_js='
+import * as std from "std";
+import * as os from "os";
+
+const [workingdir = "."] = globalThis.scriptArgs.slice(1);
+const env = std.getenviron();
+
+os.chdir(workingdir);
+
+const readJson = path => {
+  const file = std.open(path, "r");
+  if (!file) return {};
+  const ret = JSON.parse(file.readAsString());
+  file.close();
+  return ret;
+}
+
+const writeJson = (path, object) => {
+  const string = JSON.stringify(object);
+  const file = std.open(path, "w");
+  file.puts(`${string}\n`);
+  file.close();
+}
+
+const cur = readJson("metadata/metadata.json");
+const upd = readJson(".eaas-container/docker-image-inspect.json");
+
+// https://gitlab.com/emulation-as-a-service/eaas-server/-/blob/master/src/imagearchive/src/main/java/de/bwl/bwfla/imagearchive/datatypes/EmulatorMetadata.java
+
+const data = {
+  ociSourceUrl: upd[0].RepoTags[0],
+  containerDigest: upd[0].RepoDigests[0],
+  emulatorType: upd[0].ContainerConfig.Labels?.EAAS_EMULATOR_TYPE,
+  emulatorVersion: upd[0].ContainerConfig.Labels?.EAAS_EMULATOR_VERSION,
+  version: upd[0].ContainerConfig.Labels?.EAAS_EMULATOR_VERSION,
+};
+
+Object.assign(cur, Object.fromEntries(Object.entries(data).filter(([k, v]) => v)));
+
+writeJson("metadata/metadata.json", cur);
+'
 
 docker run \
   --rm "$(docker build \
   --build-arg "DOCKER_IMAGE=$DOCKER_IMAGE" \
-  --build-arg "REPO_DIGEST=$REPO_DIGEST" \
+  --build-arg "DOCKER_IMAGE_INSPECT_JSON=$DOCKER_IMAGE_INSPECT_JSON" \
+  --build-arg "update_emulator_json_js=$update_emulator_json_js" \
   -q - << 'EOF'
-  arg DOCKER_IMAGE
-  from "$DOCKER_IMAGE" as source
-  from alpine
-  arg REPO_DIGEST
-  run apk add e2fsprogs qemu-img jq
-  copy --from=source / /mnt
-  run mkdir -p /mnt/metadata
-  run printf "$REPO_DIGEST" > /mnt/metadata/repo-digest
-  run test -e /mnt/metadata/metadata.json || echo '{}' > /mnt/metadata/metadata.json
-  run jq '.containerDigest = env.REPO_DIGEST' \
-    /mnt/metadata/metadata.json > /mnt/metadata/metadata.json.new && \
-    mv /mnt/metadata/metadata.json.new /mnt/metadata/metadata.json
-  cmd truncate -s 10G /image.raw >&2 && \
+  ARG DOCKER_IMAGE
+  FROM "$DOCKER_IMAGE" AS source
+  FROM alpine
+  ARG DOCKER_IMAGE_INSPECT_JSON
+  ARG update_emulator_json_js
+  RUN apk add e2fsprogs qemu-img
+  RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/testing quickjs
+  COPY --from=source / /mnt
+  RUN mkdir_bak() { \
+    target="$1"; \
+    if test -L "$target" || test -e "$target"; then \
+      temp="$(mktemp -d tmp.XXXXXXXXXX)"; \
+      mv "$target" "$temp/$target.bak"; \
+      mv "$temp" "$target"; \
+    fi; \
+    mkdir -p "$target"; \
+    }; \
+    mkdir_bak /mnt/.eaas-container
+  RUN printf "%s\n" "$DOCKER_IMAGE_INSPECT_JSON" > /mnt/.eaas-container/docker-image-inspect.json
+  RUN mkdir -p /mnt/metadata
+  RUN printf "%s" "$update_emulator_json_js" > /update_emulator_json.js \
+    && qjs -m /update_emulator_json.js /mnt
+  CMD truncate -s 10G /image.raw >&2 && \
     time mkfs.ext4 -v -d /mnt /image.raw >&2 && \
     time qemu-img convert -f raw -O qcow2 /image.raw /image.qcow2 >&2 && \
     rm /image.raw >&2 && \
