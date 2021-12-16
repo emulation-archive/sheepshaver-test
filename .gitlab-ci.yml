@@ -8,7 +8,7 @@ build:
     #- docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" || true
     - docker build --cache-from "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-    - time ./convert-docker-to-qcow2 "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" "image.qcow2"
+    - time ./convert-docker-to-qcow2 "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "image.qcow2"
   artifacts:
     paths:
       - image.qcow2
