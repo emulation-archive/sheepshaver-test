@@ -36,7 +36,7 @@ import * as emulator from "./emulator.js";
     machine.addComponent(metadata.construct(component.component, component));
   }
 
-  machine.start();
+  console.debug(await machine.start());
   /*
   const process = run({cmd: ["sh", "-c", "kill $$"]});
   await timeout(1000);

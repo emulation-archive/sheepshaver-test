@@ -4,12 +4,12 @@
     {
       "index": 2,
       "component": "emulators:sheepshaver#default-disk",
-      "path": "/emucon/drives/drive1"
+      "path": "/emucon/disks/disk1"
     },
     {
       "index": 3,
       "component": "emulators:sheepshaver#default-os-rom",
-      "path": ""
+      "path": "/emucon/disks/rom"
     }
   ],
   "frameworkComponents": [

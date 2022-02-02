@@ -47,9 +47,6 @@ export class Xpra extends FrameworkComponent {
   constructor() {
     super();
 
-    /* await */ mkdir("/tmp/.X11-unix");
-
-    console.log("xpra:", new.target.meta);
     this.args = [
       "xpra",
       "start",
@@ -69,12 +66,16 @@ export class Xpra extends FrameworkComponent {
       "--mdns=off",
       "--html=on",
     ];
-    console.log(this.args);
   }
-  start() {
-    console.debug("starting Xpra");
-    run({
+  async start() {
+    try {
+      await mkdir("/tmp/.X11-unix").catch(()=>{});
+    } catch (e) {
+      console.log(e);
+    }
+      console.debug("starting Xpra2");
+    console.debug(await run({
       cmd: this.args,
-    });
+    }).status());
   }
 }

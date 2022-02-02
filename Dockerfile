@@ -1,4 +1,5 @@
 FROM registry.gitlab.com/emulation-as-a-service/emulators/emulators-base
+FROM registry.gitlab.com/emulation-as-a-service/emulators/macemu-eaas-sheepshaver
 
 COPY setup setup
 RUN ./setup

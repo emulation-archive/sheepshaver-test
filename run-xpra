@@ -43,4 +43,5 @@ docker run -it \
   -e EAAS_CONFIG="$(cat config.json)" \
   -v "$PWD/emucon:/emucon" \
   "$docker_image" \
-  setpriv --reuid=1000 --regid=1000 --init-groups -- /init 
+  runuser -u bwfla -- /init
+  #setpriv --reuid=1000 --regid=1000 --init-groups -- /init
