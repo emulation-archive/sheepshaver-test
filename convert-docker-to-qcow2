@@ -85,6 +85,6 @@ docker run \
     time mkfs.ext4 -v -d /mnt /image.raw >&2 && \
     time qemu-img convert -f raw -O qcow2 /image.raw "$image" >&2 && \
     rm /image.raw >&2 && \
-    chown "$uid:$gid" "/host/$image"
+    chown "$uid:$gid" "$image"
 EOF
 )"
