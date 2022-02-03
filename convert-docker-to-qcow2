@@ -52,7 +52,8 @@ writeJson("metadata/metadata.json", cur);
 '
 
 docker run \
-  -v "/:/host" -e uid="$(id -u)" -e gid="$(id -g)" -e image="$(realpath -- "$QCOW2_IMAGE")" \
+  -v "/:/host" -e uid="$(id -u)" -e gid="$(id -g)" \
+  -e image="/host/$(realpath -- "$(dirname -- "$QCOW2_IMAGE")")/$(basename -- "$QCOW2_IMAGE")" \
   --rm "$(docker build \
   --build-arg "DOCKER_IMAGE=$DOCKER_IMAGE" \
   --build-arg "DOCKER_IMAGE_INSPECT_JSON=$DOCKER_IMAGE_INSPECT_JSON" \
@@ -82,7 +83,7 @@ docker run \
     && qjs -m /update_emulator_json.js /mnt
   CMD truncate -s 10G /image.raw >&2 && \
     time mkfs.ext4 -v -d /mnt /image.raw >&2 && \
-    time qemu-img convert -f raw -O qcow2 /image.raw "/host/$image" >&2 && \
+    time qemu-img convert -f raw -O qcow2 /image.raw "$image" >&2 && \
     rm /image.raw >&2 && \
     chown "$uid:$gid" "/host/$image"
 EOF
