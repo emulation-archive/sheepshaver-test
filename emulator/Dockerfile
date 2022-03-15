@@ -1,5 +1,6 @@
 FROM registry.gitlab.com/emulation-as-a-service/emulators/emulators-base
 FROM registry.gitlab.com/emulation-as-a-service/emulators/macemu-eaas-sheepshaver
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y xterm
 
 COPY setup setup
 RUN ./setup

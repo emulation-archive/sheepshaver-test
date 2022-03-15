@@ -1,21 +1,21 @@
 {
-  "machine": "emulators:sheepshaver#default",
+  "machine": "emulators:sheepshaver#ppc",
   "hardwareComponents": [
     {
       "index": 2,
-      "component": "emulators:sheepshaver#default-disk",
+      "component": "emulators:sheepshaver#ppc-disk",
       "path": "/emucon/disks/disk1"
     },
     {
       "index": 3,
-      "component": "emulators:sheepshaver#default-os-rom",
+      "component": "emulators:sheepshaver#ppc-os-rom",
       "path": "/emucon/disks/rom"
     }
   ],
   "frameworkComponents": [
     {
-      "frameworkComponent": "eaas:xpra",
-      "path": "/emucon/xpra-iosock"
+      "component": "eaas:xpra",
+      "path": "/emucon/xpra.sock"
     }
   ],
   "nativeConfig": ["-smp", "2"]

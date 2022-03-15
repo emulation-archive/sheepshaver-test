@@ -2,4 +2,4 @@
 self="$(dirname -- "$(realpath -- "$0")")"
 
 # cd -- "$self"
-exec qjs "$self/init.js" "$@"
+exec runuser -u bwfla -- qjs "$self/init.js" "$@"

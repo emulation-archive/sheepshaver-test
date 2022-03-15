@@ -1,0 +1,47 @@
+#!/bin/sh -u
+
+: "${PORT:=8099}"
+echo "http://localhost:$PORT"
+
+docker_image="$1"
+shift
+
+set -x
+socat tcp-listen:"$PORT",reuseaddr,fork unix-connect:emucon/xpra.sock &
+pid="$!"
+set +x
+trap 'set -x; kill "$pid"' EXIT HUP INT TERM
+
+EAAS_CONFIG='
+{
+  "machine": "emulators:sheepshaver#ppc",
+  "hardwareComponents": [
+    {
+      "index": 2,
+      "component": "emulators:sheepshaver#ppc-disk",
+      "path": "/emucon/disks/disk1"
+    },
+    {
+      "index": 3,
+      "component": "emulators:sheepshaver#ppc-os-rom",
+      "path": "/emucon/disks/rom"
+    }
+  ],
+  "frameworkComponents": [
+    {
+      "component": "eaas:xpra",
+      "path": "/emucon/xpra.sock"
+    }
+  ],
+  "nativeConfig": ["-smp", "2"]
+}
+'
+
+# {"id": 1, "method": "getMethods", "params": []}
+# {"id": 1, "method": "getMetadata", "params": []}
+
+docker run -it \
+  -e EAAS_CONFIG="$EAAS_CONFIG" \
+  -v "$PWD/emucon:/emucon" \
+  "$docker_image" \
+  /init

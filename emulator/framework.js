@@ -7,7 +7,7 @@ export function dirname(path) {
 
 export async function waitPath() {}
 
-export class Pulse extends FrameworkComponent {
+export class Pulseaudio extends FrameworkComponent {
   env = {};
   get pulsesock() {
     return this.path;
@@ -38,15 +38,21 @@ export class Pulse extends FrameworkComponent {
 
     this.env.PULSE_SERVER = this.pulsesock;
   }
+  async start() {
+    await run({
+      cmd: this.args,
+    })
+  }
+
 }
 
 export class Xpra extends FrameworkComponent {
   display = ":7000";
   xprasock = "/emucon/xpra";
   hasPulse = false;
-  constructor() {
+  constructor(config) {
     super();
-
+    this.xprasock = config.path;
     this.args = [
       "xpra",
       "start",

@@ -1,0 +1,7 @@
+#!/bin/sh -eu
+
+dest="$1"
+image="$2"
+emulator_uuid="$3"
+
+time rsync -z --rsync-path "sudo rsync" -v --progress "$image" "$dest:/eaas-home/image-archive/emulators/images/base/$emulator_uuid"

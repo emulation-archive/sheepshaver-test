@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mkdir -p emucon/disks/
+cp newworld86.rom emucon/disks/rom
+# cp ../macemu-example/805a8880-fd8e-4677-a621-230ff1e1949614.raw emucon/disks/disk1
+qemu-img convert -f qcow2 -O raw ../macemu-example/805a8880-fd8e-4677-a621-230ff1e1949614 emucon/disks/disk1

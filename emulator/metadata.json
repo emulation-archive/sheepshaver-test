@@ -3,17 +3,17 @@
   "emulatorVersion": "1",
   "supportedMachines": [
     {
-      "id": "emulators:sheepshaver#default",
+      "id": "emulators:sheepshaver#ppc",
       "title": "SheepShaver Power Mac",
       "superClass": "Machine",
       "supportedHardwareComponents": [
         {
-          "id": "emulators:sheepshaver#default-disk",
+          "id": "emulators:sheepshaver#ppc-disk",
           "type": "eaas:disk",
           "superClass": "Disk"
         },
         {
-          "id": "emulators:sheepshaver#default-os-rom",
+          "id": "emulators:sheepshaver#ppc-os-rom",
           "type": "eaas:rom",
           "superClass": "Rom"
         }
@@ -24,6 +24,11 @@
     {
       "id": "eaas:xpra",
       "superClass": "Xpra",
+      "order": 1
+    },
+    {
+      "id": "eaas:pulseaudio",
+      "superClass": "Pulseaudio",
       "order": 1
     }
   ]

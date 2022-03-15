@@ -79,6 +79,7 @@ class Process {
   running = true;
   constructor({ cmd, env = {} }) {
     const env2 = { ...std.getenviron(), ...env };
+    console.debug("executing", cmd);
     this.pid = os.exec(cmd, { block: false, env: env2 });
     this._done = (async () => {
       let ret, status;
@@ -97,12 +98,74 @@ class Process {
     })();
   }
 
-  status(){
+  status() {
     return this._done;
   }
 
   kill(signal) {
     if (signal.startsWith("SIG") && os[signal]) signal = os[signal];
     if (this.running) os.kill(this.pid, signal);
+  }
+}
+
+async function readable(file) {
+  await new Promise((resolve) =>
+    os.setReadHandler(file.fileno(), () => {
+      os.setReadHandler(file.fileno(), null);
+      resolve();
+    })
+  );
+}
+
+export class Reader {
+  /** @type {os.File} */ file;
+  constructor(file) {
+    this.file = file;
+  }
+  async readable() {
+    return readable(this.file);
+  }
+  async read(array) {
+    await this.readable();
+    return os.read(
+      this.file.fileno(),
+      array.buffer ?? array,
+      array.byteOffset ?? 0,
+      array.byteLength
+    );
+  }
+  async getLineBlocking() {
+    await this.readable();
+    return this.file.getline();
+  }
+}
+
+export class JsonRpcServer {
+  methods;
+  constructor(methods) {
+    this.methods = methods;
+  }
+  async serve(file) {
+    const reader = new Reader(file);
+    for (let line; (line = await reader.getLineBlocking()); ) {
+      console.log("read line", line);
+      try {
+        const { id, method, params } = JSON.parse(line);
+        if (!this.methods.hasOwnProperty(method)) continue;
+        try {
+          const result =
+            this.methods[method](
+              ...(Array.isArray(params) ? params : [params])
+            ) ?? null;
+          console.log(JSON.stringify({ id, result }));
+        } catch (error) {
+          console.log(
+            JSON.stringify({ id, error: JSON.stringify(error.stack) })
+          );
+        }
+      } catch (error) {
+        console.log(JSON.stringify({ error: JSON.stringify(error.stack) }));
+      }
+    }
   }
 }
