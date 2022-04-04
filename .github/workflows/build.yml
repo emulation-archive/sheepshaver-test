@@ -1,0 +1,21 @@
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - env:
+          image: ghcr.io/${{github.repository}}:${{github.ref_name}}
+        run: |
+          docker login -u github -p ${{github.token}} "$image"
+          cd emulator
+          docker build --cache-from "$image" -t "$image" .
+          docker push "$image"
+          cd ..
+          time ./convert-docker-to-qcow2 "$image" "image.qcow2"
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: image.qcow2
+          tag_name: ${{github.ref_name}}-nightly
+          prerelease: true
+          target_commitish: ${{github.sha}}
